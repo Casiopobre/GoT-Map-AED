@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
                 imprimir_grafo(G);
                 break;
             case 's': case 'S':
-                opcion='s';
+                opcion = 's';
                 break;
             default:
                 printf("Opción equivocada\n");

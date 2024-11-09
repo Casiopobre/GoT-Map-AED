@@ -47,9 +47,20 @@ void nuevo_arco(grafo *G) {
         printf("El vertice %d no existe en el grafo\n", v2);
         return;
     }
+
+    // Distancia e tipo de conexión
+    int distancia;
+    printf("Introduce la distancia en km desde vertice1 hasta vertice2: \n");
+    scanf("%d", &distancia);
+    char tipo;
+    do {
+        printf("Introduce el tipo de conexion ('t' para tierra o 'm' para mar): \n");
+        scanf("%c", &tipo);
+    } while (tipo != 't' || tipo != 'm');
+    
     //Creación del arco
     if (!son_adyacentes(*G, posicion(*G, v1), posicion(*G, v2)))
-        crear_arco(G, posicion(*G, v1), posicion(*G, v2));
+        crear_arco(G, posicion(*G, v1), posicion(*G, v2), distancia, tipo);
 }
 
 //Opción d del menú, eliminar una relación entre dos vértices

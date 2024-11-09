@@ -3,6 +3,7 @@
 #define GRAFO_H
 
 #define MAXVERTICES 100 /*maximo numero de nodos*/
+#define MAXNAME 30// Lonxitude maxima dun nome
 
 /*
  * Implementación estática del TAD grafo con una matriz
@@ -12,7 +13,15 @@
 /////////////////////////////////////////////////////////// TIPOS DE DATOS
 
 //Información que se almacena en cada vértice
-typedef int tipovertice;
+typedef struct{
+    char nombreCiudad[MAXNAME];
+    char nombreRegion[MAXNAME];
+} tipovertice;
+
+typedef struct{
+    int distancia;
+    char tipo; // t para Terra e m para Mar
+} tipoarco;
 
 typedef struct tipografo * grafo;
 
@@ -27,7 +36,7 @@ void crear_grafo(grafo *G);
 int posicion(grafo G, tipovertice Vert);
 
 //Devuelve 1 si el grafo G existe y 0 en caso contrario
-int existe(grafo G);
+int existe_grafo(grafo G);
 
 //Devuelve 1 si el vértice Vert existe en el grafo G
 int existe_vertice(grafo G, tipovertice Vert);
@@ -41,12 +50,12 @@ int insertar_vertice(grafo *G, tipovertice Vert);
 void borrar_vertice(grafo *G, tipovertice Vert);
 
 //Crea el arco de relación entre VERTICES(pos1) y VERTICES(pos2)
-void crear_arco(grafo *G, int pos1, int pos2);
+void crear_arco(grafo *G, int pos1, int pos2, int distancia, char tipo);
 
 //Borra el arco de relación entre VERTICES(pos1) y VERTICES(pos2)
 void borrar_arco(grafo *G, int pos1, int pos2);
 
-//Devuelve 1 si VERTICES(pos1) y VERTICES(pos2) son vértices adyacentes
+//Devuelve el peso si VERTICES(pos1) y VERTICES(pos2) son vértices adyacentes
 int son_adyacentes(grafo G, int pos1, int pos2);
 
 //Destruye el grafo
