@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "funciones.h"
+#include "GoTMap.h"
+#include "colors.h"
 
 /*
  * Programa que muestra el uso del TAD grafo de números enteros
@@ -13,15 +14,27 @@ int main(int argc, char** argv) {
 
     //Creo el grafo
     crear_grafo(&G);
-    do {
-        printf("\n\na. Insertar nuevo vertice\n");
-        printf("b. Eliminar vertice\n");
-        printf("c. Crear arco\n");
-        printf("d. Eliminar arco\n");
-        printf("i. Imprimir grafo\n");
-        printf("s. Salir\n");
 
-        printf("Opcion: ");
+    //Proceso los archivos
+    if(argc > 1){
+        printf(BRIGHT_BOLD_GREEN "\nProcesando archivos . . .\n" RESET);
+        leerArchivos(argv[1], argv[2], &G);
+    } else 
+        printf(BRIGHT_BOLD_GREEN "\nTrabajando SIN archivos . . .\n" RESET);
+
+    do {
+        printf(BOLD_MAGENTA);
+        printf("\n--------------------------------------------------------");
+        printf("\n~*~*~*~*~*~*~*~ Seleccione una opción ~*~*~*~*~*~*~*~\n");
+        printf("\na) Insertar una nueva ciudad (vertice)\n");
+        printf("\nb) Eliminar ciudad (vertice)\n");
+        printf("\nc) Crear nueva conexion (arco)\n");
+        printf("\nd) Eliminar una conexion (arco)\n");
+        printf("\ni) Imprimir mapa (grafo)\n");
+        printf("\ns) Salir\n");
+        printf("--------------------------------------------------------\n");
+        printf(RESET);
+        printf("\nOpcion: ");
         scanf(" %c", &opcion); 
 
         switch (opcion) {

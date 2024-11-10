@@ -1,0 +1,19 @@
+Ciudad,Región
+Harrenhal,The Riverlands
+Casterly Rock,The Westernlands
+Lannisport,The Westernlands
+Winterfell,The North
+Cerwyn,The North
+Bear Island,The North
+Deepwood Motte,The North
+Riverrun,The Riverlands
+Moat Cailin,The North
+Highgarden,The Reach
+Old Town,The Reach
+White Harbor,The North
+Dreadfort,The North
+Seagard,The Riverlands
+Iron Islands,Iron Islands
+King's Landing,The Crownlands
+Storm's End,The Stormlands
+Dragon Stone,The Crownl

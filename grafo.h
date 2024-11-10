@@ -55,8 +55,11 @@ void crear_arco(grafo *G, int pos1, int pos2, int distancia, char tipo);
 //Borra el arco de relación entre VERTICES(pos1) y VERTICES(pos2)
 void borrar_arco(grafo *G, int pos1, int pos2);
 
-//Devuelve el peso si VERTICES(pos1) y VERTICES(pos2) son vértices adyacentes
-int son_adyacentes(grafo G, int pos1, int pos2);
+//Devuelve la distancia entre dos vertices (0 si no son adyacetes)
+int distancia(grafo G, int pos1, int pos2);
+
+// Devuelve el tipo de conexion entre dos vertices
+char tipoconexion(grafo G, int pos1, int pos2);
 
 //Destruye el grafo
 void borrar_grafo(grafo *G);

@@ -69,9 +69,9 @@ int insertar_vertice(grafo *G, tipovertice V) {
 }
 
 //Borra un vertice del grafo
-void borrar_vertice(grafo *G, tipovertice Vert) {
+void borrar_vertice(grafo *G, tipovertice V) {
     int pos, N = (*G)->N; // N = num de vertices do grafo
-    pos = posicion(*G, Vert); // pos = posicion do verrtice no grafo
+    pos = posicion(*G, V); // pos = posicion do verrtice no grafo
     if(pos == -1){
         perror("O vertice non esta no grafo\n");
     	return; 

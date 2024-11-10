@@ -1,0 +1,23 @@
+Origen,Destino,Distancia,Tipo 
+Casterly Rock,Lannisport,64,t
+Winterfell,Cerwyn,160,t
+Riverrun,Harrenhal,410,t
+Moat Cailin,Cerwyn,420,t
+Highgarden,Oldtown,530,t
+Winterfell,Whiteharbor,550,t
+Winterfell,Dreadfort,560,t
+Winterfell,Deepwood Motte,560,t
+King's Landing,Storm's End,630,t
+Riverrun,Casterly Rock,680,t
+Dragonstone,Riverrun,960,t
+Winterfell,Castle Black,1050,t
+Highgarden,King's Landing,1220,t
+Riverrun,King's Landing,1300,t
+King's Landing,Casterly Rock,1340,t
+Winterfell,Harrenhal,1870,t
+Riverrun,Winterfell,2290,t
+King's Landing,Winterfell,2300,t
+Bear Island,Deepwood Motte,225,m
+Bear Island,Iron Islands,2415,m
+Iron Islands,Lannisport,1050,m
+The Arbor,Oldtown,480,m

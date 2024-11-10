@@ -1,6 +1,5 @@
-#ifndef FUNCIONES_H
-#define FUNCIONES_H
-
+#ifndef GOTMAP_H
+#define GOTMAP_H
 #include "grafo.h"
 
 //FUNCIONES DEL PROGRAMA DE PRUEBA DE GRAFOS
@@ -19,6 +18,8 @@ void eliminar_arco(grafo *G);
 //Opción i del menú, imprimir el grafo
 void imprimir_grafo(grafo G);
 
+//Funcion que lee los archivos e inicializa el grafo
+void leerArchivos(char *nombreArchivo1, char *nombreArchivo2, grafo *G);
 
-#endif	/* FUNCIONES_H */
+#endif	/* GOTMAP_H */
 
