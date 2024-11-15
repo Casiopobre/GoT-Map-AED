@@ -1,4 +1,4 @@
-Ciudad,Región
+Ciudad,Region
 Harrenhal,The Riverlands
 Casterly Rock,The Westernlands
 Lannisport,The Westernlands
@@ -16,4 +16,6 @@ Seagard,The Riverlands
 Iron Islands,Iron Islands
 King's Landing,The Crownlands
 Storm's End,The Stormlands
-Dragon Stone,The Crownl
+Dragon Stone,The Crownlands
+Castle Black,The North
+The Arbor,The Reach

@@ -21,5 +21,8 @@ void imprimir_grafo(grafo G);
 //Funcion que lee los archivos e inicializa el grafo
 void leerArchivos(char *nombreArchivo1, char *nombreArchivo2, grafo *G);
 
+// Funcion que guarda los datos en dos archivos(primero el de vertices y luego el de aristas)
+void guardarArchivos(int argc, char **argv, grafo G);
+
 #endif	/* GOTMAP_H */
 

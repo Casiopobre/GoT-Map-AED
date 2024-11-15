@@ -3,6 +3,7 @@
 #include "grafo.h"
 #include "colors.h"
 #define BUF_MAX 256
+#define MAX 16
 
 //FUNCIONES DEL PROGRAMA DE PRUEBA DE GRAFOS
 
@@ -66,8 +67,7 @@ void nuevo_arco(grafo *G) {
     //Creación dos arcos
     if (!distancia(*G, posicion(*G, v1), posicion(*G, v2)))
         crear_arco(G, posicion(*G, v1), posicion(*G, v2), dist, tipo);
-    if (!distancia(*G, posicion(*G, v2), posicion(*G, v1)))
-        crear_arco(G, posicion(*G, v2), posicion(*G, v1), dist, tipo);
+    
 }
 
 //Opción d del menú, eliminar una relación entre dos vértices
@@ -103,7 +103,7 @@ void imprimir_grafo(grafo G) {
     int n = num_vertices(G);
     VECTOR = array_vertices(G);
 
-    printf(BRIGHT_BOLD_GREEN "El grafo actual es:\n\n" RESET);
+    printf(BRIGHT_GREEN "El grafo actual es:\n\n" RESET);
     for (int i = 0; i < n; i++) {
         //Imprimo el vértice
         printf(BLUE "Vertice(%d):\n\tCiudad:%s\n\tRegion:%s\n" RESET, i, VECTOR[i].nombreCiudad, VECTOR[i].nombreRegion);
@@ -139,7 +139,7 @@ void leerArchivos(char *nombreArchivo1, char *nombreArchivo2, grafo *G){
     fseek(archivoVertices, 0, SEEK_SET);
     fgets(buffer, sizeof(buffer), archivoVertices); // Ignoramos la cabecera
     while(fgets(buffer, sizeof(buffer), archivoVertices) != NULL){
-        sscanf(buffer, "%s,%s\n", v.nombreCiudad, v.nombreRegion);
+        sscanf(buffer, "%[^,],%[^\n]", v.nombreCiudad, v.nombreRegion);
         if (!existe_vertice(*G, v))
             insertar_vertice(G, v);
     }
@@ -147,14 +147,46 @@ void leerArchivos(char *nombreArchivo1, char *nombreArchivo2, grafo *G){
     fseek(archivoAristas, 0, SEEK_SET);
     fgets(buffer, sizeof(buffer), archivoAristas);
     while(fgets(buffer, sizeof(buffer), archivoAristas) != NULL){
-        sscanf(buffer, "%s,%s,%d,%c", v1.nombreCiudad, v2.nombreCiudad, &dist, &tipo);
+        sscanf(buffer, "%[^,],%[^,],%d,%c", v1.nombreCiudad, v2.nombreCiudad, &dist, &tipo);
         if (!distancia(*G, posicion(*G, v1), posicion(*G, v2)))
             crear_arco(G, posicion(*G, v1), posicion(*G, v2), dist, tipo);
-        if (!distancia(*G, posicion(*G, v2), posicion(*G, v1)))
-            crear_arco(G, posicion(*G, v2), posicion(*G, v1), dist, tipo);
     }
 
+    // Cerramos los archivos
     fclose(archivoVertices);
     fclose(archivoAristas);
 }
 
+// Funcion para guardar los datos en dos archivos, uno para las ciudades y otro para los caminos
+void guardarArchivos(int argc, char **argv, grafo G){
+    FILE *archivoVertices, *archivoAristas;
+    char archivoUsuarioV[MAX], archivoUsuarioA[MAX];
+    // Si el programa se inicializo con archivos, guarda los datos en esos archivos, si no, se crean 2 archivos nuevos
+    if(argc >= 3){
+        printf(BRIGHT_GREEN "Actualizando los archivos iniciales . . .\n\n" RESET);
+        archivoVertices = fopen(argv[1], "w");
+        archivoAristas = fopen(argv[2],"w");
+    } else{
+        printf(CYAN "Indrozudca el nombre con el que quiere guardar el archivo de las ciudades (vertices): ");
+        scanf(" %[^\n\r]", archivoUsuarioV);
+        archivoVertices = fopen(archivoUsuarioV, "w");
+        printf(CYAN "Indrozudca el nombre con el que quiere guardar el archivo de las conexiones (aristas): ");
+        scanf(" %[^\n\r]", archivoUsuarioA);
+        archivoAristas = fopen(archivoUsuarioA, "w");
+    }
+    
+    // Guardamos los datos
+    fprintf(archivoVertices,"Ciudad,Region\n"); // Imprimimos la cabecera
+    fprintf(archivoAristas, "Origen,Destino,Distancia,Tipo\n"); // Imprimimos la cabecera
+    tipovertice *vectorVertices = array_vertices(G);
+    int n = num_vertices(G);
+    for(int i = 0; i < n; i++){
+        fprintf(archivoVertices, "%s,%s\n", vectorVertices[i].nombreCiudad, vectorVertices[i].nombreRegion);
+        for(int j = i; j < n; j++){
+            if(distancia(G, i, j) > 0)
+                fprintf(archivoAristas, "%s,%s,%d,%c\n", vectorVertices[i].nombreCiudad, vectorVertices[j].nombreCiudad, distancia(G, i, j), tipoconexion(G, i, j));
+        }
+    }
+    fclose(archivoVertices);
+    fclose(archivoAristas);
+}

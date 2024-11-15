@@ -1,23 +1,25 @@
-Origen,Destino,Distancia,Tipo 
+Origen,Destino,Distancia,Tipo
+Harrenhal,Winterfell,1870,t
+Harrenhal,Riverrun,410,t
 Casterly Rock,Lannisport,64,t
+Casterly Rock,Riverrun,680,t
+Casterly Rock,King's Landing,1340,t
+Lannisport,Iron Islands,1050,m
 Winterfell,Cerwyn,160,t
-Riverrun,Harrenhal,410,t
-Moat Cailin,Cerwyn,420,t
-Highgarden,Oldtown,530,t
-Winterfell,Whiteharbor,550,t
-Winterfell,Dreadfort,560,t
 Winterfell,Deepwood Motte,560,t
-King's Landing,Storm's End,630,t
-Riverrun,Casterly Rock,680,t
-Dragonstone,Riverrun,960,t
+Winterfell,Riverrun,2290,t
+Winterfell,White Harbor,550,t
+Winterfell,Dreadfort,560,t
+Winterfell,King's Landing,2300,t
 Winterfell,Castle Black,1050,t
-Highgarden,King's Landing,1220,t
-Riverrun,King's Landing,1300,t
-King's Landing,Casterly Rock,1340,t
-Winterfell,Harrenhal,1870,t
-Riverrun,Winterfell,2290,t
-King's Landing,Winterfell,2300,t
+Cerwyn,Moat Cailin,420,t
 Bear Island,Deepwood Motte,225,m
 Bear Island,Iron Islands,2415,m
-Iron Islands,Lannisport,1050,m
-The Arbor,Oldtown,480,m
+Riverrun,Seagard,400,t
+Riverrun,King's Landing,1300,t
+Riverrun,Dragon Stone,960,t
+Highgarden,Old Town,530,t
+Highgarden,King's Landing,1220,t
+Old Town,The Arbor,480,m
+Seagard,Iron Islands,500,m
+King's Landing,Storm's End,630,t

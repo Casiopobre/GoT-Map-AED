@@ -99,11 +99,13 @@ void crear_arco(grafo *G, int pos1, int pos2, int distancia, char tipo) {
     arco.distancia = distancia;
     arco.tipo = tipo;
     (*G)->MA[pos1][pos2] = arco;
+    (*G)->MA[pos2][pos1] = arco;
 }
 
 //Borra el arco de relación entre VERTICES(pos1) y VERTICES(pos2)
 void borrar_arco(grafo *G, int pos1, int pos2) {
     (*G)->MA[pos1][pos2].distancia = 0;
+    (*G)->MA[pos2][pos1].distancia = 0;
 }
 
 //Devuelve la distancia entre dos vertices (0 si no son adyacetes)
