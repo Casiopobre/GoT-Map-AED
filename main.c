@@ -32,6 +32,8 @@ int main(int argc, char** argv) {
         printf("\nd) Eliminar una conexion (arco)\n");
         printf("\ni) Imprimir mapa (grafo)\n");
         printf("\ne) Imprimir camino más corto\n");
+        printf("\nf) Imprimir camino más rápido\n");
+        printf("\ng) Imprimir mínima infraestructura\n");
         printf("\ns) Salir\n");
         printf("--------------------------------------------------------\n");
         printf(RESET);
@@ -57,8 +59,15 @@ int main(int argc, char** argv) {
             case 'e': case 'E':
                 imprimir_ruta_mas_corta(G);
                 break;
+            case 'f': case 'F':
+                imprimir_ruta_mas_rapida(G);
+                break;
+            case 'g': case 'G':
+                minima_infraestructura(G);
+                break;
             case 's': case 'S':
                 opcion = 's';
+                guardarArchivos(argc, argv, G);
                 break;
             default:
                 printf("Opción equivocada\n");

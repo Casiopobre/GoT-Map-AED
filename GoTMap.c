@@ -2,12 +2,21 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "grafo.h"
-#include "colors.h"
 #define BUF_MAX 256
 #define MAX 16
 #define VEL_CABALLO_TIERRA 5.5
 #define VEL_CABALLO_MAR 11.25
 #define VEL_DRAGON 80.0
+
+// Colores:
+#define RESET "\033[0m"
+#define BOLD_WHITE "\033[1;37m"
+#define RED "\033[31m"
+#define BOLD_YELLOW "\033[1;33m"
+#define BRIGHT_GREEN "\033[92m"
+#define BLUE "\033[34m"
+#define BRIGHT_BLUE "\033[94m"
+
 
 //FUNCIONES DEL PROGRAMA DE PRUEBA DE GRAFOS
 
@@ -210,7 +219,7 @@ void _imprimir_matriz(int matriz[MAXVERTICES][MAXVERTICES], int numV) {
 }
 
 
-void _floyd_warshall(grafo G, int dist[MAXVERTICES][MAXVERTICES], int sig[MAXVERTICES][MAXVERTICES]) {
+void _floyd_warshall(grafo G, float dist[MAXVERTICES][MAXVERTICES], int sig[MAXVERTICES][MAXVERTICES], char tipoTrans) {
     int numV = num_vertices(G);
     
     // Inicializamos las matrices
@@ -219,7 +228,17 @@ void _floyd_warshall(grafo G, int dist[MAXVERTICES][MAXVERTICES], int sig[MAXVER
             if (i == j) {
                 dist[i][j] = 0;
             } else if (distancia(G, i, j) > 0) {
-                dist[i][j] = distancia(G, i, j);
+                if(tipoTrans == 'c'){ // tipoTrans por caballo
+                    if(tipoconexion(G, i, j) == 't'){
+                        dist[i][j] = distancia(G, i, j) / VEL_CABALLO_TIERRA;
+                    } else if (tipoconexion(G, i, j) == 'm'){
+                        dist[i][j] = distancia(G, i, j) / VEL_CABALLO_MAR;
+                    }
+                } else if (tipoTrans == 'd'){ // Tansporte por dragón
+                    dist[i][j] = distancia(G, i, j) / VEL_DRAGON;
+                } else{
+                    dist[i][j] = distancia(G, i, j);
+                }
             } else {
                 dist[i][j] = INT_MAX;
             }
@@ -299,19 +318,138 @@ void imprimir_ruta_mas_corta(grafo G) {
     int pos1 = posicion(G, v1);
     int pos2 = posicion(G, v2);
 
-    int dist[MAXVERTICES][MAXVERTICES];
+    float dist[MAXVERTICES][MAXVERTICES];
     int sig[MAXVERTICES][MAXVERTICES];
 
-    _floyd_warshall(G, dist, sig);
+    _floyd_warshall(G, dist, sig, '!');
 
     if (dist[pos1][pos2] == INT_MAX) {
         printf(RED "No hay ruta entre %s y %s\n" RESET, v1.nombreCiudad, v2.nombreCiudad);
     } else {
-        printf(BRIGHT_GREEN "La distancia más corta entre %s y %s es: %d km\n" RESET, v1.nombreCiudad, v2.nombreCiudad, dist[pos1][pos2]);
+        printf(BRIGHT_GREEN "La distancia más corta entre %s y %s es: %f km\n" RESET, v1.nombreCiudad, v2.nombreCiudad, dist[pos1][pos2]);
         printf(BRIGHT_BLUE "Ruta: ");
         _imprimir_camino(G, sig, pos1, pos2);
         printf(RESET);
         printf("\n");
     }
+}
+
+void imprimir_ruta_mas_rapida(grafo G) {
+    tipovertice v1, v2;
+    char tipoTrans;
+    
+    // Vértice origen
+    printf(BOLD_WHITE "Introduce el nombre de la ciudad origen: " RESET);
+    scanf(" %[^\n\r]", v1.nombreCiudad);
+    if (!existe_vertice(G, v1)) {
+        printf(RED "La ciudad %s no existe en el grafo\n" RESET, v1.nombreCiudad);
+        return;
+    }
+
+    // Vértice destino
+    printf(BOLD_WHITE "Introduce la ciudad de destino: " RESET);
+    scanf(" %[^\n\r]", v2.nombreCiudad);
+    if (!existe_vertice(G, v2)) {
+        printf(RED "La ciudad %s no existe en el grafo\n" RESET, v2.nombreCiudad);
+        return;
+    }
+
+    // Medio de tipoTrans
+    do {
+        printf(BOLD_WHITE "Selecciona el medio de tipoTrans (c para caballo, d para dragón): " RESET);
+        scanf(" %c", &tipoTrans);
+    } while (tipoTrans != 'c' && tipoTrans != 'd');
+
+    int pos1 = posicion(G, v1);
+    int pos2 = posicion(G, v2);
+
+    float dist[MAXVERTICES][MAXVERTICES];
+    int sig[MAXVERTICES][MAXVERTICES];
+
+    _floyd_warshall(G, dist, sig, tipoTrans);
+
+    if (dist[pos1][pos2] == INT_MAX) {
+        printf("No hay ruta entre %s y %s\n", v1.nombreCiudad, v2.nombreCiudad);
+    } else {
+        printf(BRIGHT_GREEN "Tiempo más corto entre %s y %s es: %.2f horas\n" RESET, v1.nombreCiudad, v2.nombreCiudad, dist[pos1][pos2]);
+        printf(BRIGHT_BLUE "Ruta: ");
+        _imprimir_camino(G, sig, pos1, pos2);
+        printf("\n" RESET);
+    }
+}
+
+void _prim_minimal(grafo G, char tipoTrans) {
+    int numV = num_vertices(G);
+    int selected[MAXVERTICES] = {0};
+    double min_cost[MAXVERTICES][MAXVERTICES];
+    int edge_count = 0;
+    double total_cost = 0.0;
+    selected[0] = 1;  // Iniciamos seleccionando el primer vértice
+
+    tipovertice *vertices = array_vertices(G);
+
+    // Inicializamos la matriz de costes mínimos
+    for (int i = 0; i < numV; i++) {
+        for (int j = 0; j < numV; j++) {
+            if (distancia(G, i, j) > 0) {
+                if (tipoTrans == 'c') {  // caballo
+                    if (tipoconexion(G, i, j) == 't') {
+                        min_cost[i][j] = distancia(G, i, j) / VEL_CABALLO_TIERRA;
+                    } else if (tipoconexion(G, i, j) == 'm') {
+                        min_cost[i][j] = distancia(G, i, j) / VEL_CABALLO_MAR;
+                    }
+                } else if (tipoTrans == 'd') {  // dragón
+                    min_cost[i][j] = distancia(G, i, j) / VEL_DRAGON;
+                }
+            } else {
+                min_cost[i][j] = INT_MAX;
+            }
+        }
+    }
+
+    printf(BOLD_YELLOW "Infraestructura mínima de conexiones:\n" RESET);
+
+    while (edge_count < numV - 1) {
+        double min = INT_MAX;
+        int x = 0, y = 0;
+
+        // Encuentra el arco de coste mínimo
+        for (int i = 0; i < numV; i++) {
+            if (selected[i]) {
+                for (int j = 0; j < numV; j++) {
+                    if (!selected[j] && min_cost[i][j] < min) {
+                        min = min_cost[i][j];
+                        x = i;
+                        y = j;
+                    }
+                }
+            }
+        }
+
+        selected[y] = 1;
+        edge_count++;
+        total_cost += min;
+        printf(BRIGHT_BLUE);
+        // Imprime el arco seleccionado y su coste
+        printf("%-25s", vertices[x].nombreCiudad);
+        if (tipoconexion(G, x, y) == 't') {
+            printf("-->\t");
+        } else if (tipoconexion(G, x, y) == 'm') {
+            printf("~~>\t");
+        }
+        printf("%-25s: %10.2f h\n", vertices[y].nombreCiudad, min);
+        printf(RESET);
+    }
+
+    printf(BRIGHT_GREEN "Costo total de infraestructura mínima: %.2f horas\n" RESET, total_cost);
+}
+
+void minima_infraestructura(grafo G){
+    char tipoTrans; 
+    do { 
+        printf(BOLD_WHITE "Selecciona el medio de transporte para calcular la mínima infraestructura (c para caballo, d para dragón): " RESET); 
+        scanf(" %c", &tipoTrans); 
+        } while (tipoTrans != 'c' && tipoTrans != 'd');
+    _prim_minimal(G, tipoTrans);
 }
 
