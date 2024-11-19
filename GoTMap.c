@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "grafo.h"
 #include "colors.h"
 #define BUF_MAX 256
 #define MAX 16
+#define VEL_CABALLO_TIERRA 5.5
+#define VEL_CABALLO_MAR 11.25
+#define VEL_DRAGON 80.0
 
 //FUNCIONES DEL PROGRAMA DE PRUEBA DE GRAFOS
 
@@ -11,9 +15,9 @@
 
 void introducir_vertice(grafo *G) {
     tipovertice v1;
-    printf(CYAN "Introduce el nombre de la nueva ciudad: " RESET);
+    printf(BOLD_WHITE "Introduce el nombre de la nueva ciudad: " RESET);
     scanf(" %[^\n\r]", v1.nombreCiudad);
-    printf(CYAN "Introduce la region de la nueva ciudad: " RESET);
+    printf(BOLD_WHITE "Introduce la region de la nueva ciudad: " RESET);
     scanf(" %[^\n\r]", v1.nombreRegion);
     if (existe_vertice(*G, v1))
         printf(RED "Esa ciudad ya esta añadida\n" RESET);
@@ -24,7 +28,7 @@ void introducir_vertice(grafo *G) {
 //Opción b del menú, eliminar un vértice del grafo
 void eliminar_vertice(grafo *G) {
     tipovertice v1;
-    printf(CYAN "Introduce en nombre de la ciudad a eliminar: " RESET);
+    printf(BOLD_WHITE "Introduce en nombre de la ciudad a eliminar: " RESET);
     scanf(" %[^\n\r]", v1.nombreCiudad);
     if (existe_vertice(*G, v1))
         borrar_vertice(G, v1);
@@ -39,7 +43,7 @@ void nuevo_arco(grafo *G) {
     printf(BOLD_YELLOW "Nueva relacion ciudad1-->ciudad2\n" RESET);
 
     //Vértice origen del arco
-    printf(CYAN "Introduce el nombre de la ciudad origen: \n" RESET);
+    printf(BOLD_WHITE "Introduce el nombre de la ciudad origen: \n" RESET);
     scanf(" %[^\n\r]", v1.nombreCiudad);
     if (!existe_vertice(*G, v1)) {
         printf(RED "La ciudad %s no existe en el grafo\n" RESET, v1.nombreCiudad);
@@ -47,7 +51,7 @@ void nuevo_arco(grafo *G) {
     }
 
     //Vértice destino del arco
-    printf(CYAN "Introduce la ciudad destino: " RESET);
+    printf(BOLD_WHITE "Introduce la ciudad destino: " RESET);
     scanf(" %[^\n\r]", v2.nombreCiudad);
     if (!existe_vertice(*G, v2)) {
         printf(RED "La ciudad %s no existe en el grafo\n" RESET, v2.nombreCiudad);
@@ -56,11 +60,11 @@ void nuevo_arco(grafo *G) {
 
     // Distancia y tiempo de conexion
     int dist;
-    printf(CYAN "Introduce la distancia en km desde la ciudad 1 hasta la ciudad 2: \n" RESET);
+    printf(BOLD_WHITE "Introduce la distancia en km desde la ciudad 1 hasta la ciudad 2: \n" RESET);
     scanf("%d", &dist);
     char tipo;
     do {
-        printf(CYAN "Introduce el tipo de conexion ('t' para tierra o 'm' para mar): \n" RESET);
+        printf(BOLD_WHITE "Introduce el tipo de conexion ('t' para tierra o 'm' para mar): \n" RESET);
         scanf(" %c", &tipo);
     } while ((tipo != 't') && (tipo != 'm'));
     
@@ -77,7 +81,7 @@ void eliminar_arco(grafo *G) {
     printf(BOLD_YELLOW "Eliminar la conexion enntre la ciudad1 y la ciudad2\n" RESET);
 
     //Vértice origen del arco
-    printf(CYAN "Introduce el nombre de la ciudad origen: " RESET);
+    printf(BOLD_WHITE "Introduce el nombre de la ciudad origen: " RESET);
     scanf(" %[^\n\r]", v1.nombreCiudad);
     if (!existe_vertice(*G, v1)) {
         printf(RED "La ciudad %s no existe en el grafo\n" RESET, v1.nombreCiudad);
@@ -85,7 +89,7 @@ void eliminar_arco(grafo *G) {
     }
 
     //Vértice destino del arco
-    printf(CYAN "Introduce la ciudad destino: " RESET);
+    printf(BOLD_WHITE "Introduce la ciudad destino: " RESET);
     scanf(" %[^\n\r]", v2.nombreCiudad);
     if (!existe_vertice(*G, v2)) {
         printf(RED "La ciudad %s no existe en el grafo\n" RESET, v2.nombreCiudad);
@@ -167,10 +171,10 @@ void guardarArchivos(int argc, char **argv, grafo G){
         archivoVertices = fopen(argv[1], "w");
         archivoAristas = fopen(argv[2],"w");
     } else{
-        printf(CYAN "Indrozudca el nombre con el que quiere guardar el archivo de las ciudades (vertices): ");
+        printf(BOLD_WHITE "Indrozudca el nombre con el que quiere guardar el archivo de las ciudades (vertices): ");
         scanf(" %[^\n\r]", archivoUsuarioV);
         archivoVertices = fopen(archivoUsuarioV, "w");
-        printf(CYAN "Indrozudca el nombre con el que quiere guardar el archivo de las conexiones (aristas): ");
+        printf(BOLD_WHITE "Indrozudca el nombre con el que quiere guardar el archivo de las conexiones (aristas): ");
         scanf(" %[^\n\r]", archivoUsuarioA);
         archivoAristas = fopen(archivoUsuarioA, "w");
     }
@@ -190,3 +194,124 @@ void guardarArchivos(int argc, char **argv, grafo G){
     fclose(archivoVertices);
     fclose(archivoAristas);
 }
+
+void _imprimir_matriz(int matriz[MAXVERTICES][MAXVERTICES], int numV) {
+    for (int i = 0; i < numV; i++) {
+        for (int j = 0; j < numV; j++) {
+            if (matriz[i][j] == INT_MAX) {
+                printf("INF ");
+            } else {
+                printf("%d ", matriz[i][j]);
+            }
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+
+void _floyd_warshall(grafo G, int dist[MAXVERTICES][MAXVERTICES], int sig[MAXVERTICES][MAXVERTICES]) {
+    int numV = num_vertices(G);
+    
+    // Inicializamos las matrices
+    for (int i = 0; i < numV; i++) {
+        for (int j = 0; j < numV; j++) {
+            if (i == j) {
+                dist[i][j] = 0;
+            } else if (distancia(G, i, j) > 0) {
+                dist[i][j] = distancia(G, i, j);
+            } else {
+                dist[i][j] = INT_MAX;
+            }
+
+            if (distancia(G, i, j) != 0 && i != j) {
+                sig[i][j] = j;
+            } else {
+                sig[i][j] = 0;
+            }
+        }
+    }
+
+    //_imprimir_matriz(dist, numV);
+    //printf("\n\n");
+    //_imprimir_matriz(sig, numV);
+    //printf("\n\n");
+
+    // Aplicamos el algoritmo
+    for (int k = 0; k < numV; k++) {
+        for (int i = 0; i < numV; i++) {
+            for (int j = 0; j < numV; j++) {
+                if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX && dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    sig[i][j] = sig[i][k];
+                }
+            }
+        }
+    }
+}
+
+void _imprimir_camino(grafo G, int sig[MAXVERTICES][MAXVERTICES], int origen, int destino) {
+    tipovertice *arrayVertices = array_vertices(G);
+    
+    // Si no hay ruta, salimos
+    if (sig[origen][destino] == -1) {
+        printf("No existe ruta entre %s y %s\n", arrayVertices[origen].nombreCiudad, arrayVertices[destino].nombreCiudad);
+        return;
+    }
+
+    // Imprime origen
+    printf("%s", arrayVertices[origen].nombreCiudad);
+    
+    while (origen != destino) {
+        int siguiente = sig[origen][destino];
+        char tipoConexion = tipoconexion(G, origen, siguiente);
+        if (tipoConexion == 't') {
+            printf(" --> ");
+        } else if (tipoConexion == 'm') {
+            printf(" ~~> ");
+        }
+        origen = siguiente;
+        printf("%s", arrayVertices[origen].nombreCiudad);
+    }
+}
+
+
+
+
+void imprimir_ruta_mas_corta(grafo G) {
+    tipovertice v1, v2;
+    //Vértice origen
+    printf(BOLD_WHITE "Introduce el nombre de la ciudad origen: " RESET);
+    scanf(" %[^\n\r]", v1.nombreCiudad);
+    if (!existe_vertice(G, v1)) {
+        printf(RED "La ciudad %s no existe en el grafo\n" RESET, v1.nombreCiudad);
+        return;
+    }
+
+    //Vértice destinoç
+    printf(BOLD_WHITE "Introduce la ciudad destino: " RESET);
+    scanf(" %[^\n\r]", v2.nombreCiudad);
+    if (!existe_vertice(G, v2)) {
+        printf(RED "La ciudad %s no existe en el grafo\n" RESET, v2.nombreCiudad);
+        return;
+    }
+
+    int pos1 = posicion(G, v1);
+    int pos2 = posicion(G, v2);
+
+    int dist[MAXVERTICES][MAXVERTICES];
+    int sig[MAXVERTICES][MAXVERTICES];
+
+    _floyd_warshall(G, dist, sig);
+
+    if (dist[pos1][pos2] == INT_MAX) {
+        printf(RED "No hay ruta entre %s y %s\n" RESET, v1.nombreCiudad, v2.nombreCiudad);
+    } else {
+        printf(BRIGHT_GREEN "La distancia más corta entre %s y %s es: %d km\n" RESET, v1.nombreCiudad, v2.nombreCiudad, dist[pos1][pos2]);
+        printf(BRIGHT_BLUE "Ruta: ");
+        _imprimir_camino(G, sig, pos1, pos2);
+        printf(RESET);
+        printf("\n");
+    }
+}
+

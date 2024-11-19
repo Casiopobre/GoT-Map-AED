@@ -24,5 +24,8 @@ void leerArchivos(char *nombreArchivo1, char *nombreArchivo2, grafo *G);
 // Funcion que guarda los datos en dos archivos(primero el de vertices y luego el de aristas)
 void guardarArchivos(int argc, char **argv, grafo G);
 
+
+void imprimir_ruta_mas_corta(grafo G);
+
 #endif	/* GOTMAP_H */
 

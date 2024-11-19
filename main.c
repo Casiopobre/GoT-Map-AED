@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
         printf("\nc) Crear nueva conexion (arco)\n");
         printf("\nd) Eliminar una conexion (arco)\n");
         printf("\ni) Imprimir mapa (grafo)\n");
+        printf("\ne) Imprimir camino más corto\n");
         printf("\ns) Salir\n");
         printf("--------------------------------------------------------\n");
         printf(RESET);
@@ -52,6 +53,9 @@ int main(int argc, char** argv) {
                 break;
             case 'i': case 'I':
                 imprimir_grafo(G);
+                break;
+            case 'e': case 'E':
+                imprimir_ruta_mas_corta(G);
                 break;
             case 's': case 'S':
                 opcion = 's';
